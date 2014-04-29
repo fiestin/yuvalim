@@ -19,6 +19,17 @@
 
 		html, body, #map {
 		    height: 100%;
+   			background-color: #fff;
+		}
+
+		.photo {
+			width: 300px;
+		}
+
+		.image-icon {
+			background-color: #fff;
+			padding: 5px;
+			border-radius:50px;
 		}
 	</style>
 
@@ -31,65 +42,58 @@
 	
 	<script type="text/javascript">
 
-		var milkIcon = L.icon({
-	    	iconUrl		: 'img/TipatHalavIcon40x25.png',
-		    iconSize	: [25, 40],
-		    iconAnchor	: [13, 39],
-		    popupAnchor	: [0, -35]
-		});
+		// create popups
+		function createPopup(feature, layer) {
+			popup_html ='<div style="text-align: center">';
+			
+			popup_html += '<img class="photo" src="' + feature.properties.image + '" /><br />';
+			if (typeof feature.properties.text !== 'undefined' )
+				popup_html += feature.properties.text;
+			
+			popup_html +='</div>';
 
-		function onEachFeature(feature, layer) {
-			// console.log(layer);
-
-			marker_html='<div style="text-align: right">';
-
-			for (var k in feature.properties) {
-				marker_html += feature.properties[k];
-				marker_html += ' <b>' + k + '</b>';
-				marker_html += '<br />';
-			}
-						
-			marker_html +='</div>';
-
-			layer.bindPopup(marker_html);
+			layer.bindPopup(popup_html);
 		}
 
+		// initial setup
+		var MAP_CENTER = [31.7655, 35.1786]; 
+		var DEFAULT_ZOOM = 20;
 		
-		var MAP_CENTER = [31.87, 35.00];
-		var DEFAULT_ZOOM = 11;
-		
-		var map = L.map('map', { scrollWheelZoom: true }).setView(MAP_CENTER, DEFAULT_ZOOM);
+		var map = L.map('map', { scrollWheelZoom: true })
+					.setView(MAP_CENTER, DEFAULT_ZOOM)
+					.setMaxBounds([[31.7624,35.176],[31.7687,35.1815]]);
 
-		// map.locate({setView : true, maxZoom: 13});
+		// tile_url = 'http://{s}.tiles.mapbox.com/v3/mareemakom.i2gaoa1o/{z}/{x}/{y}.png'; 
 
-		tile_url = 'http://{s}.tiles.mapbox.com/v3/niryariv.map-n3zuwkkz/{z}/{x}/{y}.png';
+		tile_url = 'http://niryariv.github.io/yuvalim/tiles/{z}/{x}/{y}.png';
 
 		L.tileLayer(tile_url, {
 			attribution: '<a href="https://github.com/niryariv/yuvalim">קוד</a>',
-			maxZoom: 16,
-			minZoom: 9
+			maxZoom: 22,
+			minZoom: 17
 		}).addTo(map);
 
 		L.geoJson(items,
 			{
 				pointToLayer: function (feature, latlng) {
-		        	return L.marker(latlng, {icon: milkIcon});
+		        	// return L.marker(latlng, {icon: milkIcon});
+		        	return L.marker(latlng, 
+		        					{icon: L.icon({ 
+		        							iconUrl: feature.properties.image,
+		        							iconSize: [50,50],
+		        							iconAnchor: [30,30],
+       									    popupAnchor	: [0,-20],
+		        							className: "image-icon"
+		        							})
+		        					});
 		    	},
 
 				filter: function(feature, layer) {
 			        return !feature.properties.error;
 			    },
-				onEachFeature: onEachFeature,
+				onEachFeature: createPopup,
 			}
 		).addTo(map);
 	</script>
 </body>
 </html>
-
-
-
-
-
-
-
-<!--  Jerusalem, spring 2014 -->
