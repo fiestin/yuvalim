@@ -11,7 +11,8 @@ items =
             },
             "id": null,
             "properties": {
-                "image": "data/photos/1.JPG"
+                "image": "data/photos/1.JPG",
+                "text": "פרח"
             },
             "type": "Feature"
         },
